@@ -33,11 +33,12 @@ const registerUser = async (req, res) => {
         const token = generateToken(user._id);
 
         //    set cookie
+        const isProduction = process.env.NODE_ENV !== "development";
         res.cookie("token", token, {
             httpOnly: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
         });
         res.status(201).json({
             message: "User registered successfully",
@@ -66,11 +67,12 @@ const LoginUser = async (req, res) => {
             return res.status(401).json({ message: "Invalid Credentials" })
         }
         const token = generateToken(user._id);
+        const isProduction = process.env.NODE_ENV !== "development";
         res.cookie("token", token, {
             httpOnly: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
         })
         res.status(200).json({
             message: "Login Successfully",
@@ -87,7 +89,7 @@ const LoginUser = async (req, res) => {
 
 //Logout user
 const logOutUser = async (req, res) => {
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction = process.env.NODE_ENV !== "development";
     res.cookie("token", "", {
         httpOnly: true,
         expires: new Date(0),
